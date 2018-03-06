@@ -9,6 +9,7 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 -- Discrete Fourier Transform -- O(n^2)
 dft :: [Complex Float] -> [Complex Float]
 dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
+-- dft xs = parfold (+) 0 (pmap (\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
   where
     n = length xs
     n' = n-1
@@ -21,7 +22,8 @@ dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
 
 fft :: [Complex Float] -> [Complex Float]
 fft [a] = [a]
-fft as = interleave ls rs
+fft as = ls `par` rs `pseq` interleave ls rs
+-- fft as = interleave ls rs
   where
     (cs,ds) = bflyS as
     ls = fft cs
@@ -31,12 +33,21 @@ interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
 
 bflyS :: [Complex Float] -> ([Complex Float], [Complex Float])
-bflyS as = (los,rts)
+-- bflyS as = (los,rts)
+-- bflyS as = los `par` rts `pseq` (los, rts)
+bflyS as = los `par` (ros `pseq` rts) `pseq` (los, rts)
   where
     (ls,rs) = halve as
-    los = zipWith (+) ls rs
-    ros = zipWith (-) ls rs
-    rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
+    los = parZipWith (-) ls rs
+    --los = zipWith (+) ls rs
+    
+    ros = parZipWith (-) ls rs
+    --ros = zipWith (-) ls rs
+    
+    rts = parZipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
+    -- rts = zipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
+    -- rts = parZipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
+    --rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
 
 
 -- split the input into two halves
