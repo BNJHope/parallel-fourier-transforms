@@ -1,7 +1,7 @@
-module Samples where
+module FFT.Samples where
 
 import System.Random
-import Normal
+import FFT.Normal
 import Data.Complex
 
 generate2DSamplesList ::

@@ -1,6 +1,8 @@
 import Data.Complex
-import Samples
+import FFT.Samples
 import System.Environment
+import Control.Parallel
+import Strategies
 
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
@@ -33,21 +35,21 @@ interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
 
 bflyS :: [Complex Float] -> ([Complex Float], [Complex Float])
--- bflyS as = (los,rts)
+bflyS as = (los,rts)
 -- bflyS as = los `par` rts `pseq` (los, rts)
-bflyS as = los `par` (ros `pseq` rts) `pseq` (los, rts)
+-- bflyS as = los `par` (ros `pseq` rts) `pseq` (los, rts)
   where
     (ls,rs) = halve as
-    los = parZipWith (-) ls rs
-    --los = zipWith (+) ls rs
+    -- los = parZipWith (-) ls rs
+    los = zipWith (+) ls rs
     
-    ros = parZipWith (-) ls rs
-    --ros = zipWith (-) ls rs
+    -- ros = parZipWith (-) ls rs
+    ros = zipWith (-) ls rs
     
-    rts = parZipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
+    -- rts = parZipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
     -- rts = zipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
     -- rts = parZipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
-    --rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
+    rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
 
 
 -- split the input into two halves

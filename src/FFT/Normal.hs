@@ -44,7 +44,7 @@ as repeatedly generating individual samples with e.g. 'normal'.
 -}
 
 
-module Normal (
+module FFT.Normal (
   -- * Pure interface
     normal
   , normals
