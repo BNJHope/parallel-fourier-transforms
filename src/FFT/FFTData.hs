@@ -7,16 +7,7 @@ import Strategies
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
-
--- Discrete Fourier Transform -- O(n^2)
-dft :: [Complex Float] -> [Complex Float]
-dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
--- dft xs = parfold (+) 0 (pmap (\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
-  where
-    n = length xs
-    n' = n-1
-
-
+--
 -- Fast Fourier Transform
 
 -- In case you are wondering, this is the Decimation in Frequency (DIF) 
@@ -68,7 +59,7 @@ main = do args <- getArgs
           let arglen = length args
           let n = argval args 0 defsize
           let seed = argval args 1 defseed
-          let fun = if arglen > 2 && args !! 2 == "dft" then dft else fft
+          let fun = fft
           print (sum (fun (samples seed n)))
 
 argval args n def = if length args > n then

@@ -68,7 +68,7 @@ main = do args <- getArgs
           let arglen = length args
           let n = argval args 0 defsize
           let seed = argval args 1 defseed
-          let fun = if arglen > 2 && args !! 2 == "dft" then dft else fft
+          let fun = dft
           print (sum (fun (samples seed n)))
 
 argval args n def = if length args > n then
