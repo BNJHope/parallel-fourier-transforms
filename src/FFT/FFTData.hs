@@ -15,8 +15,7 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
 fft :: [Complex Float] -> [Complex Float]
 fft [a] = [a]
-fft as = ls `par` rs `pseq` interleave ls rs
--- fft as = interleave ls rs
+fft as = interleave ls rs
   where
     (cs,ds) = bflyS as
     ls = fft cs
@@ -31,16 +30,16 @@ bflyS as = (los,rts)
 -- bflyS as = los `par` (ros `pseq` rts) `pseq` (los, rts)
   where
     (ls,rs) = halve as
-    -- los = parZipWith (-) ls rs
-    los = zipWith (+) ls rs
+    los = parzipwith (-) ls rs
+    -- los = zipWith (+) ls rs
     
-    -- ros = parZipWith (-) ls rs
-    ros = zipWith (-) ls rs
+    ros = parzipwith (-) ls rs
+    -- ros = zipWith (-) ls rs
     
-    -- rts = parZipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
-    -- rts = zipWith (*) ros (pmap (\i -> tw length (as) i) [0..(length ros) - 1])
-    -- rts = parZipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
-    rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
+    rts = parzipwith (*) ros (parmap (\i -> tw (length (as)) i) [0..(length ros) - 1])
+    -- rts = zipWith (*) ros (parmap (\i -> tw (length (as)) i) [0..(length ros) - 1])
+    -- rts = parzipwith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
+    -- rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
 
 
 -- split the input into two halves

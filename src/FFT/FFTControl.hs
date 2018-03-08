@@ -15,8 +15,8 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
 fft :: [Complex Float] -> [Complex Float]
 fft [a] = [a]
--- fft as = ls `par` rs `pseq` interleave ls rs
-fft as = interleave ls rs
+fft as = ls `par` rs `pseq` interleave ls rs
+-- fft as = interleave ls rs
   where
     (cs,ds) = bflyS as
     ls = fft cs
