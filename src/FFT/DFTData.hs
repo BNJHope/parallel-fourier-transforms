@@ -10,8 +10,11 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
 -- Discrete Fourier Transform -- O(n^2)
 dft :: [Complex Float] -> [Complex Float]
-dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
--- dft xs = parfold (+) 0 (pmap (\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
+-- dft xs = [ sum (parmap(\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
+dft xs = [ (parfold (+) (0 :+ 0) (parmap(\j -> xs!!j * tw n (j*k)) [0..n'])) | k <- [0..n']]
+
+
+
   where
     n = length xs
     n' = n-1
