@@ -1,3 +1,6 @@
+module FFT.FFTControl (
+    fftbflySPipeline
+) where
 import Data.Complex
 import FFT.Samples
 import System.Environment
@@ -15,8 +18,8 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
 fft :: [Complex Float] -> [Complex Float]
 fft [a] = [a]
-fft as = ls `par` rs `pseq` interleave ls rs
--- fft as = interleave ls rs
+--fft as = ls `par` rs `pseq` interleave ls rs
+fft as = interleave ls rs
   where
     (cs,ds) = bflyS as
     ls = fft cs
@@ -42,25 +45,21 @@ bflyS as = (los,rts)
     -- rts = parZipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
     rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
 
+fftbflySPipeline as = interleave ls rs
+    where
+        (cs,ds) = bflySPipeline as
+        ls = fft cs
+        rs = fft ds
+
+bflySPipeline :: [Complex Float] -> ([Complex Float], [Complex Float])
+bflySPipeline as = (los,rts)
+    where
+        (ls, rs) = halve as
+        los = zipWith (+) ls rs
+        rts = parpipeline2 (zipWith (-) ls) (zipWith (*) [tw (length as) i | i <- [0..(length rs) - 1]]) rs
+
 -- split the input into two halves
 halve as = splitAt n' as
   where
     n' = div (length as + 1) 2
 
--- the main function
--- uses Samples.samples to generate some sample data
---   samples :: Int -> Int -> [Complex Float]
-
-defsize = 1000 -- change this to get larger samples
-defseed = 1
-
-main = do args <- getArgs
-          let arglen = length args
-          let n = argval args 0 defsize
-          let seed = argval args 1 defseed
-          let fun = fft
-          print (sum (fun (samples seed n)))
-
-argval args n def = if length args > n then
-                       read (args !! n)
-                     else def

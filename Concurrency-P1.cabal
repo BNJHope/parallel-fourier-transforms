@@ -36,7 +36,7 @@ executable fft-control
   main-is:             FFT/FFTControl.hs
   other-modules:       FFT.Samples
   -- other-extensions:    
-  build-depends:       base >=4.9 && <4.10, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
+  build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts
@@ -58,3 +58,13 @@ executable dft-data
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts
+
+executable bench
+  main-is:             FFT/Bench.hs
+  other-modules:       FFT.Samples FFT.DFTData FFT.DFTControl FFT.FFTData FFT.FFTControl FFT.Samples FFT.Orig
+  -- other-extensions:    
+  build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options: -threaded -rtsopts -O
+
