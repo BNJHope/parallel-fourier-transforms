@@ -15,40 +15,74 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
-executable fft-control
-  main-is:             FFT/FFTControl.hs
-  other-modules:       FFT.Samples FFT.Samples FFT.Orig
+executable fft-control-bench
+  main-is:             Bench/FFTControlBench.hs
+  other-modules:       FFT.Samples FFT.Samples FFT.Orig FFT.FFTControl
   -- other-extensions:    
   build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts -O
 
-executable dft-control
-  main-is:             FFT/DFTControl.hs
-  other-modules:       FFT.Samples FFT.Samples FFT.Orig
+executable dft-control-bench
+  main-is:             Bench/DFTControlBench.hs
+  other-modules:       FFT.Samples FFT.Samples FFT.Orig FFT.DFTControl
   -- other-extensions:    
   build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts -O
 
-executable fft-data
-  main-is:             FFT/FFTData.hs
-  other-modules:       FFT.Samples FFT.Samples FFT.Orig
+executable fft-data-bench
+  main-is:             Bench/FFTDataBench.hs
+  other-modules:       FFT.Samples FFT.Samples FFT.Orig FFT.FFTData
   -- other-extensions:    
   build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts -O
 
-executable dft-data
-  main-is:             FFT/DFTData.hs
-  other-modules:       FFT.Samples FFT.Samples FFT.Orig
+executable dft-data-bench
+  main-is:             Bench/DFTDataBench.hs
+  other-modules:       FFT.Samples FFT.Samples FFT.Orig FFT.DFTData
   -- other-extensions:    
   build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options: -threaded -rtsopts -O
 
+test-suite test-dft-data
+    type:       exitcode-stdio-1.0
+    main-is: test/DFTDataTest.hs
+    other-modules:       FFT.Samples FFT.Orig FFT.DFTData
+    build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1, HUnit
+    hs-source-dirs:      src
+    default-language:    Haskell2010
+    ghc-options: -threaded -rtsopts -O
 
+test-suite test-dft-control
+    type:       exitcode-stdio-1.0
+    main-is: test/DFTControlTest.hs
+    other-modules:       FFT.Samples FFT.Orig FFT.DFTControl
+    build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1, HUnit
+    hs-source-dirs:      src
+    default-language:    Haskell2010
+    ghc-options: -threaded -rtsopts -O
+
+test-suite test-fft-data
+    type:       exitcode-stdio-1.0
+    main-is: test/FFTDataTest.hs
+    other-modules:       FFT.Samples FFT.Orig FFT.FFTData
+    build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1, HUnit
+    hs-source-dirs:      src
+    default-language:    Haskell2010
+    ghc-options: -threaded -rtsopts -O
+
+test-suite test-fft-control
+    type:       exitcode-stdio-1.0
+    main-is: test/FFTControlTest.hs
+    other-modules:       FFT.Samples FFT.Orig FFT.FFTControl
+    build-depends:       base >=4.9 && <4.10, criterion, deepseq >=1.4 && <1.5, containers >=0.5 && <0.6, parallel >= 1.1, random >= 1.1, HUnit
+    hs-source-dirs:      src
+    default-language:    Haskell2010
+    ghc-options: -threaded -rtsopts -O

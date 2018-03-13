@@ -1,25 +1,39 @@
+module FFT.DFTData(
+    dftInnerMap,
+    dftFoldMap,
+    dftOuterMap,
+    dftInnerMapReduce
+) where
 import Data.Complex
 import FFT.Samples
-import System.Environment
 import Control.Parallel
 import Strategies
-import Criterion.Main
-import FFT.Orig
 
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
--- Discrete Fourier Transform -- O(n^2)
--- dft xs = [ sum (parmap(\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
-dftFoldMap xs = [ (parfold (+) (0 :+ 0) (parmap(\j -> xs!!j * tw n (j*k)) [0..n'])) | k <- [0..n']]
+dftInnerMap xs = [ sum (parmap (\j -> xs!!j * tw n (j*k)) [0..n']) | k <- [0..n']]
   where
     n = length xs
     n' = n-1
 
-main = defaultMain [
-                bgroup "dft-data" [
-                    bench "orig" $ nf sum (dft (samples 1 1000)),
-                    bench "foldMap" $ nf sum (dftFoldMap (samples 1 1000))
-                ]
-    ]
+dftFoldMap xs = [ (parfold (+) (0 :+ 0) (innerMap k)) | k <- [0..n']]
+  where
+    innerMap k = parmap (\j -> xs!!j * tw n (j*k)) [0..n']
+    n = length xs
+    n' = n-1
+
+dftOuterMap xs = parmap innerFunc [0..n']
+    where
+        innerFunc k = sum [ xs!!j * tw n (j*k) | j <- [0..n']]
+        n = length xs
+        n' = n-1
+
+dftInnerMapReduce xs = map (\k -> parMapReduceSimple rdeepseq (mapper k) rdeepseq reducer [0..n']) [0..n']
+    where
+        mapper k j = xs!!j * tw n (j*k)
+        reducer = sum
+        n = length xs
+        n' = n-1
+
