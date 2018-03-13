@@ -21,7 +21,7 @@ dcdft xs = dc split threshold combine worker [0..n']
     worker = map workerInner
         where workerInner k = [sum (map (\j -> xs!!j * tw n (j*k)) [0..n'])]
     combine = concat
-    threshold = (\x -> length x < 2) -- (floor $ sqrt $ fromIntegral n'))
+    threshold = (\x -> length x < (floor $ sqrt $ fromIntegral n'))
     split l = [front, back]
         where
             front = take p l
