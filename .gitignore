@@ -1,4 +1,3 @@
 *.pdf
 dist
-*.html
-*.csv
+results
