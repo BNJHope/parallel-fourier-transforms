@@ -89,7 +89,7 @@ parFold strat f z l = parFold' (length l) f z l
 
 
 parstream2 f1 f2 = 
-   parpipeline3 (map f1) (map f2)
+   parpipeline2 (map f1) (map f2)
 
 parstream3 f1 f2 f3 = 
    parpipeline3 (map f1) (map f2) (map f3)
