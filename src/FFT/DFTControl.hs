@@ -1,12 +1,10 @@
-module FFT.DFTControl
-(
---	dcdft
-) where
 import Data.Complex
 import FFT.Samples
 import System.Environment
 import Control.Parallel
 import Strategies
+import Criterion.Main
+import FFT.Orig
 
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
@@ -15,10 +13,6 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 -- Discrete Fourier Transform -- O(n^2)
 -- dft :: [Complex Float] -> [Complex Float]
 -- taskfarm :: NFData b => (a -> [b]) -> Int -> [a] -> [[b]]
-dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
-  where
-    n = length xs
-    n' = n-1
 
 --dcdft [] = []
 --dcdft xs = dc split threshold combine worker xs
@@ -33,3 +27,9 @@ dft xs = [ sum [ xs!!j * tw n (j*k) | j <- [0..n']] | k <- [0..n']]
 --	    front = take p xs
 --	    back = drop p xs
 --	    p = length xs `div` 2
+--
+main = defaultMain [
+                bgroup "dft-control" [
+                    
+                ]
+    ]

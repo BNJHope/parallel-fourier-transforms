@@ -1,27 +1,14 @@
-module FFT.FFTData (
-) where
 import Data.Complex
 import FFT.Samples
 import System.Environment
 import Control.Parallel
 import Strategies
+import Criterion.Main
+import FFT.Orig
 
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
---
--- Fast Fourier Transform
-
--- In case you are wondering, this is the Decimation in Frequency (DIF) 
--- radix 2 Cooley-Tukey FFT
-
-fft :: [Complex Float] -> [Complex Float]
-fft [a] = [a]
-fft as = interleave ls rs
-  where
-    (cs,ds) = bflyS as
-    ls = fft cs
-    rs = fft ds
 
 interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
@@ -48,3 +35,8 @@ bflyS as = (los,rts)
 halve as = splitAt n' as
   where
     n' = div (length as + 1) 2
+
+main = defaultMain [
+                bgroup "fft-data" [
+                ]
+    ]

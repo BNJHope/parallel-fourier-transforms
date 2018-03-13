@@ -8,19 +8,18 @@ import FFT.Samples
 import Data.Complex
 import System.Environment
 
-defsize = 100000 -- change this to get larger samples
-defseed = 1
-
 main = defaultMain [
                 bgroup "dft-data" [
-                
+                    bench "orig" $ nf sum (dft (samples 1 1000)),
+                    bench "foldMap" $ nf sum (dftFoldMap (samples 1 1000))
                 ],
                 bgroup "dft-control" [
                     
                 ],
-                bgroup "fft-control" [ bench "orig"  $ whnf sum (fft (samples 1 100000)),
-                            bench "bflySPipeline" $ whnf sum (fftbflySPipeline (samples 1 100000))
+                bgroup "fft-control" [
+                    bench "orig" $ nf sum (fft (samples 1 100000)),
+                    bench "bflySPipeline" $ nf sum (fftbflySPipeline (samples 1 100000))
                 ],
                 bgroup "fft-data" [
                 ]
-                ]
+    ]

@@ -1,29 +1,14 @@
-module FFT.FFTControl (
-    fftbflySPipeline
-) where
 import Data.Complex
 import FFT.Samples
 import System.Environment
 import Control.Parallel
 import Strategies
+import Criterion.Main
+import FFT.Orig
 
 -- twiddle factors
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
-
--- Fast Fourier Transform
-
--- In case you are wondering, this is the Decimation in Frequency (DIF) 
--- radix 2 Cooley-Tukey FFT
-
-fft :: [Complex Float] -> [Complex Float]
-fft [a] = [a]
---fft as = ls `par` rs `pseq` interleave ls rs
-fft as = interleave ls rs
-  where
-    (cs,ds) = bflyS as
-    ls = fft cs
-    rs = fft ds
 
 interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
@@ -63,3 +48,9 @@ halve as = splitAt n' as
   where
     n' = div (length as + 1) 2
 
+main = defaultMain [
+                bgroup "fft-control" [
+                    bench "orig" $ nf sum (fft (samples 1 100000)),
+                    bench "bflySPipeline" $ nf sum (fftbflySPipeline (samples 1 100000))
+                ]
+    ]
