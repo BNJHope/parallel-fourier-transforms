@@ -1,6 +1,7 @@
 module FFT.FFTControl(
     fftbflySPipeline,
-    fftdc
+    fftdc,
+    fftdcPipeline
 ) where
 import Data.Complex
 import FFT.Samples
@@ -22,6 +23,15 @@ fftdc as = dc split threshold combine worker as
 		worker a = [a]
 		split xs = [cs, ds]
 			where (cs, ds) = bflyS xs
+
+fftdcPipeline as = dc split threshold combine worker as
+	where
+                combine [xs] = xs
+		combine [xs,ys] = interleave xs ys
+		threshold = (\x -> length x <= 1) --(floor $ sqrt $ fromIntegral as))
+		worker a = [a]
+		split xs = [cs, ds]
+			where (cs, ds) = bflySPipeline xs
 
 fftbflySPipeline as = interleave ls rs
     where
