@@ -16,7 +16,8 @@ tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
 fftdc as = dc split threshold combine worker as
 	where
-		combine = interleave
+                combine [xs] = xs
+		combine [xs,ys] = interleave xs ys
 		threshold = (\x -> length x <= 1) --(floor $ sqrt $ fromIntegral as))
 		worker a = [a]
 		split xs = [cs, ds]
@@ -28,6 +29,7 @@ fftbflySPipeline as = interleave ls rs
         ls = fft cs
         rs = fft ds
 
+interleave :: [Complex Float] -> [Complex Float] -> [Complex Float]
 interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
 
