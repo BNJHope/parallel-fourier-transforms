@@ -20,7 +20,7 @@ fftMapReduce [a] = [a]
 fftMapReduce as = parMapReduceSimple rdeepseq mapper rdeepseq reducer [as]
 	where
 		mapper = bflyS
-		reducer [(cs,ds)] = parinterleave (fft cs) (fft ds)
+		reducer [(cs,ds)] = parinterleave (fftMapReduce cs) (fftMapReduce ds)
 		
 fftbFlySParZip :: [Complex Float] -> [Complex Float]
 fftbFlySParZip [a] = [a]
