@@ -11,7 +11,7 @@ setupEnv = do
 
 main = defaultMain [
         env setupEnv $ \ ~(samples256, samples512, samples1024) -> bgroup "DFT-Control" [
-                bgroup "dft-control265" [
+                bgroup "dft-control256" [
                     bench "orig" $ nf dft samples256,
                     bench "dcdft" $ nf dcdft samples256,
                     bench "tfdft" $ nf tfdft samples256,

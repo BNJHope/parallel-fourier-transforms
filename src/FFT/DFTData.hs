@@ -2,7 +2,8 @@ module FFT.DFTData(
     dftInnerMap,
     dftFoldMap,
     dftOuterMap,
-    dftInnerMapReduce
+    dftInnerMapReduce,
+    dftInnerParMapReduce
 ) where
 import Data.Complex
 import FFT.Samples
@@ -31,7 +32,14 @@ dftOuterMap xs = parmap innerFunc [0..n']
         n = length xs
         n' = n-1
 
-dftInnerMapReduce xs = parmap (\k -> parMapReduceSimple rdeepseq (mapper k) rdeepseq reducer [0..n']) [0..n']
+dftInnerMapReduce xs = map (\k -> parMapReduceSimple rdeepseq (mapper k) rdeepseq reducer [0..n']) [0..n']
+    where
+        mapper k j = xs!!j * tw n (j*k)
+        reducer = sum
+        n = length xs
+        n' = n-1
+
+dftInnerParMapReduce xs = parmap (\k -> parMapReduceSimple rdeepseq (mapper k) rdeepseq reducer [0..n']) [0..n']
     where
         mapper k j = xs!!j * tw n (j*k)
         reducer = sum
