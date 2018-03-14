@@ -18,8 +18,15 @@ testfftbFlySParZipMap = TestCase (assertEqual "FFT-blfys-parzipmap" expected act
         actual = (sum $ fft samples512)
         samples512 = samples 1 512
 
+testfftMapReduce = TestCase (assertEqual "FFT-map-reduce" expected actual)
+    where
+        expected = (sum $ fftMapReduce samples512)
+        actual = (sum $ fft samples512)
+        samples512 = samples 1 512
+
 
 tests = TestList [TestLabel "testfftFlySParZip" testfftbFlySParZip,
-                TestLabel "testfftbFlySParZipMap" testfftbFlySParZipMap]
+                TestLabel "testfftbFlySParZipMap" testfftbFlySParZipMap,
+		TestLabel "testfftMapReduce" testfftMapReduce]
 
 main = runTestTT tests

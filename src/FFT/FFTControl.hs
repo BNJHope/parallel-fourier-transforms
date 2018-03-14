@@ -1,5 +1,6 @@
 module FFT.FFTControl(
-    fftbflySPipeline
+    fftbflySPipeline,
+    fftdc
 ) where
 import Data.Complex
 import FFT.Samples
@@ -13,6 +14,20 @@ import FFT.Orig
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
+fftdc as = dc split threshold combine worker as
+	where
+		combine = interleave
+		threshold = (\x -> length x <= 1) --(floor $ sqrt $ fromIntegral as))
+		worker a = a 
+		split xs = [cs, ds]
+			where (cs, ds) = bflyS xs
+
+fftbflySPipeline as = interleave ls rs
+    where
+        (cs,ds) = bflySPipeline as
+        ls = fft cs
+        rs = fft ds
+
 interleave [] bs = bs
 interleave (a:as) bs = a : interleave bs as
 
@@ -23,12 +38,6 @@ bflyS as = (los,rts)
     los = zipWith (+) ls rs
     ros = zipWith (-) ls rs
     rts = zipWith (*) ros [tw (length as) i | i <- [0..(length ros) - 1]]
-
-fftbflySPipeline as = interleave ls rs
-    where
-        (cs,ds) = bflySPipeline as
-        ls = fft cs
-        rs = fft ds
 
 bflySPipeline :: [Complex Float] -> ([Complex Float], [Complex Float])
 bflySPipeline as = (los,rts)

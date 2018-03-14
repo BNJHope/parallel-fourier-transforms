@@ -1,6 +1,7 @@
 module FFT.FFTData (
     fftbFlySParZip,
-    fftbFlySParZipMap
+    fftbFlySParZipMap,
+    fftMapReduce
 ) where
 import Data.Complex
 import FFT.Samples
@@ -14,6 +15,13 @@ import FFT.Orig
 tw :: Int -> Int -> Complex Float
 tw n k = cis (-2 * pi * fromIntegral k / fromIntegral n)
 
+fftMapReduce :: [Complex Float] -> [Complex Float]
+fftMapReduce [a] = [a]
+fftMapReduce as = parMapReduceSimple rdeepseq mapper rdeepseq reducer [as]
+	where
+		mapper = bflyS
+		reducer [(cs,ds)] = interleave (fft cs) (fft ds)
+		
 fftbFlySParZip :: [Complex Float] -> [Complex Float]
 fftbFlySParZip [a] = [a]
 fftbFlySParZip as = interleave ls rs
@@ -38,7 +46,6 @@ bflyS as = (los,rts)
   where
     (ls,rs) = halve as
     los = zipWith (+) ls rs
-
     ros = zipWith (-) ls rs
     
     -- rts = parzipwith (*) ros (parmap (\i -> tw (length (as)) i) [0..(length ros) - 1])
