@@ -1,5 +1,7 @@
 module FFT.DFTControl (
-    dcdft
+    dcdft,
+    tfdft,
+    nestedtfdft
 ) where
 import Data.Complex
 import FFT.Samples
@@ -28,3 +30,20 @@ dcdft xs = dc split threshold combine worker [0..n']
             back = drop p l
             p = length l `div` 2
 
+tfdft [] = []
+tfdft xs = taskfarm worker numWorkers [0..n']
+  where
+    n = length xs
+    n' = n-1
+    numWorkers = (floor $ sqrt $ fromIntegral n')
+    worker k = [sum [ xs!!j * tw n (j*k) | j <- [0..n']]]
+
+nestedtfdft [] = []
+nestedtfdft xs = taskfarm worker numWorkers [0..n']
+  where
+    n = length xs
+    n' = n-1
+    numWorkers = (floor $ sqrt $ fromIntegral n')
+    worker k = [foldr (+) (0 :+ 0) (concat (taskfarm (innerWorker k) numWorkers [0..n']))]
+        where
+            innerWorker k j = [xs!!j * tw n (j*k)]
