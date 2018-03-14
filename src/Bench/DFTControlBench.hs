@@ -14,18 +14,21 @@ main = defaultMain [
                 bgroup "dft-control256" [
                     bench "orig" $ nf dft samples256,
                     bench "dcdft" $ nf dcdft samples256,
+                    bench "nesteddcdft" $ nf nesteddcdft samples256,
                     bench "tfdft" $ nf tfdft samples256,
                     bench "nestedtfdft" $ nf nestedtfdft samples256
 		    ],
                 bgroup "dft-control512" [
                     bench "orig" $ nf dft samples512,
                     bench "dcdft" $ nf dcdft samples512,
+                    bench "nesteddcdft" $ nf nesteddcdft samples512,
                     bench "tfdft" $ nf tfdft samples512,
                     bench "nestedtfdft" $  nf nestedtfdft samples512
 		    ],
                 bgroup "dft-control1024" [
                     bench "orig" $ nf dft samples1024,
                     bench "dcdft" $ nf dcdft samples1024,
+                    bench "nesteddcdft" $ nf nesteddcdft samples1024,
                     bench "tfdft" $ nf tfdft samples1024,
                     bench "nestedtfdft" $  nf nestedtfdft samples1024
                     ]
