@@ -18,7 +18,7 @@ fftdc as = dc split threshold combine worker as
 	where
 		combine = interleave
 		threshold = (\x -> length x <= 1) --(floor $ sqrt $ fromIntegral as))
-		worker a = a 
+		worker a = [a]
 		split xs = [cs, ds]
 			where (cs, ds) = bflyS xs
 
