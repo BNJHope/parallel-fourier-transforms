@@ -1,2 +1,2 @@
-# Concurrency-P1
-Various implementations of parallel Fourier transforms using both DFT and FFT algorithms.
+# Parallel Fourier Transforms
+Various implementations of parallel Fourier transforms using both DFT and Cooley-Tukey FFT algorithms.
